@@ -48,48 +48,15 @@ app.get("/", async (req, res) => {
   res.send("Hi!");
 });
 
-// app.get("/users", authenticateToken, async (req, res) => {
-//   const {username} = req.body;
-//   try {
-//     // Ensure req.user is correctly typed
-//     const user = await prisma.user.findUnique({ where: {username}});
-//     res.json(user);
-//   } catch (error) {
-//     res.status(500).json({ error: "An error occurred" });
-//   }
-// });
-
-// app.get("/users/:id", authenticateToken, async (req, res) => {
-//   const { id } = req.params; // Extract the user ID from the URL parameters
-
-//   try {
-//     // Ensure the logged-in user cannot access other users' data if their id is 1
-//     if (req.user?.id === 1 && req.user.id !== Number(id)) {
-//       return res.status(403).json({
-//         message: "Access forbidden: You cannot view other users' data.",
-//       });
-//     }
-
-//     // Find the user by ID
-//     const user = await prisma.user.findUnique({ where: { id: Number(id) } });
-
-//     if (!user) {
-//       return res.status(404).json({ message: "User not found" });
-//     }
-
-//     res.json(user);
-//   } catch (error) {
-//     res.status(500).json({ error: "An error occurred" });
-//   }
-// });
-
 app.get("/users/:id", authenticateToken, async (req, res) => {
   const { id } = req.params; // Extract the user ID from the URL parameters
 
   try {
     // Ensure the logged-in user can only access their own data
     if (req.user?.id !== Number(id)) {
-      return res.status(403).json({ message: "Access forbidden: You can only view your own data." });
+      return res.status(403).json({
+        message: "Access forbidden: You can only view your own data.",
+      });
     }
 
     // Find the user by ID
