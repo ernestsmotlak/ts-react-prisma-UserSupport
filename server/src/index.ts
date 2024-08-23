@@ -49,10 +49,11 @@ app.get("/", async (req, res) => {
 });
 
 app.get("/users", authenticateToken, async (req, res) => {
+  const {username} = req.body;
   try {
     // Ensure req.user is correctly typed
-    const users = await prisma.user.findMany();
-    res.json(users);
+    const user = await prisma.user.findUnique({ where: {username}});
+    res.json(user);
   } catch (error) {
     res.status(500).json({ error: "An error occurred" });
   }
