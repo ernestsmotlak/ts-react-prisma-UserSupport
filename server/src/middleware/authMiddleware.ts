@@ -1,20 +1,17 @@
-// src/middleware/authMiddleware.ts
 import { Request, Response, NextFunction } from "express";
 import jwt from "jsonwebtoken";
 
 const JWT_SECRET = "burek";
 
-// Define a type for the user payload in the JWT
 interface UserPayload {
   id: number;
   username: string;
 }
 
-// Extend the Express Request interface to include `user`
 declare global {
   namespace Express {
     interface Request {
-      user?: UserPayload; // Optional user property
+      user?: UserPayload;
     }
   }
 }
@@ -32,9 +29,8 @@ export const authenticateToken = (
   jwt.verify(token, JWT_SECRET, (err, user) => {
     if (err) return res.status(403).json({ message: "Forbidden 1" });
 
-    // Type the `user` parameter
     if (user && typeof user === "object") {
-      req.user = user as UserPayload; // Attach user info to the request object
+      req.user = user as UserPayload;
     } else {
       return res.status(403).json({ message: "Forbidden 2" });
     }
