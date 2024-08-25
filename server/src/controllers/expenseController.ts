@@ -45,3 +45,43 @@ export const getExpensesForUser = async (req: Request, res: Response) => {
     res.status(500).json({ error: "An error occurred" });
   }
 };
+
+export const addExpense = async (req: Request, res: Response) => {
+  const { userId } = req.params; // Get userId from URL parameters
+  const { groupId, amountPaid, paidFor } = req.body; // Get other data from request body
+
+  console.log("userId:", userId);
+  console.log("groupId:", groupId);
+  console.log("amountPaid:", amountPaid);
+  console.log("paidFor:", paidFor);
+
+  try {
+    // Convert the values to the correct types
+    const groupIdInt = parseInt(groupId, 10);
+    const userIdInt = parseInt(userId, 10);
+    console.log('!! userIDint: ', userIdInt);
+    const amountPaidFloat = parseFloat(amountPaid);
+
+    // Check if the conversions are successful
+    if (isNaN(groupIdInt) || isNaN(userIdInt) || isNaN(amountPaidFloat)) {
+      return res.status(400).json({ error: "Invalid input data" });
+    }
+
+    // Create a new expense linked to the userId from params
+    const newExpense = await prisma.expense.create({
+      data: {
+        groupId: groupIdInt,
+        paidById: userIdInt, // Use the parsed integer value
+        amountPaid: amountPaidFloat, // Use the parsed float value
+        paidFor: paidFor,
+      },
+    });
+
+    res.status(201).json(newExpense); // Respond with the created expense
+  } catch (error) {
+    console.error("Error adding expense:", error);
+    res
+      .status(500)
+      .json({ error: "An error occurred while adding the expense" });
+  }
+};
