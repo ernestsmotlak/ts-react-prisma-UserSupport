@@ -96,48 +96,33 @@ export const addExpense = async (req: Request, res: Response) => {
 };
 
 export const updateExpense = async (req: Request, res: Response) => {
-  const { expenseId } = req.params;
-  const { groupName, paidById, amountPaid } = req.body;
+  const { expenseId } = req.params; // Get expenseId from URL parameters
+  const { amountPaid } = req.body; // Get amountPaid from the request body
 
   try {
-    const nameOfGroup = groupName;
+    // Convert and validate input
     const idOfExpense = Number(expenseId);
-    const idOfPayer = Number(paidById);
     const paidAmount = parseFloat(amountPaid);
 
-    if (
-      nameOfGroup === "" ||
-      isNaN(idOfExpense) ||
-      isNaN(idOfPayer) ||
-      isNaN(paidAmount)
-    ) {
+    // Validate input data
+    if (isNaN(idOfExpense) || isNaN(paidAmount)) {
       return res.status(400).json({ error: "Invalid input data!" });
     }
 
+    // Update Expense record
     const expenseUpdate = await prisma.expense.update({
       where: { id: idOfExpense },
       data: {
-        group: {
-          update: {
-            name: groupName,
-          },
-        },
-        paidBy: {
-          connect: {
-            id: idOfPayer,
-          },
-        },
-      },
-      include: {
-        group: true,
+        amountPaid: paidAmount, // Update the amountPaid field
       },
     });
 
+    // Respond with the updated expense
     res.status(200).json({ expenseUpdate });
   } catch (error) {
     console.error("Error updating expense!", error);
     res
       .status(500)
-      .json({ error: "An error occured while updating the expense!" });
+      .json({ error: "An error occurred while updating the expense!" });
   }
 };
