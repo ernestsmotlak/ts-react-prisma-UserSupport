@@ -63,8 +63,16 @@ export const addExpense = async (req: Request, res: Response) => {
     const amountPaidFloat = parseFloat(amountPaid);
 
     // Check if the conversions are successful and if expenseName is provided
-    if (isNaN(groupIdInt) || isNaN(userIdInt) || isNaN(amountPaidFloat) || !expenseName || expenseName.trim() === '') {
-      return res.status(400).json({ error: "Invalid input data or missing expenseName" });
+    if (
+      isNaN(groupIdInt) ||
+      isNaN(userIdInt) ||
+      isNaN(amountPaidFloat) ||
+      !expenseName ||
+      expenseName.trim() === ""
+    ) {
+      return res
+        .status(400)
+        .json({ error: "Invalid input data or missing expenseName" });
     }
 
     // Create a new expense linked to the userId from params
@@ -86,54 +94,50 @@ export const addExpense = async (req: Request, res: Response) => {
       .json({ error: "An error occurred while adding the expense" });
   }
 };
-// export const updateExpense = async (req: Request, res: Response) => {
-//   const { expenseId } = req.params;
-//   const { groupName, paidById, amountPaid } = req.body;
 
-//   console.log(expenseId);
-//   console.log(groupName);
-//   console.log(paidById);
-//   console.log(amountPaid);
+export const updateExpense = async (req: Request, res: Response) => {
+  const { expenseId } = req.params;
+  const { groupName, paidById, amountPaid } = req.body;
 
-//   try {
-//     const nameOfGroup = groupName;
-//     const idOfExpense = Number(expenseId);
-//     const idOfPayer = Number(paidById);
-//     const paidAmount = parseFloat(amountPaid);
+  try {
+    const nameOfGroup = groupName;
+    const idOfExpense = Number(expenseId);
+    const idOfPayer = Number(paidById);
+    const paidAmount = parseFloat(amountPaid);
 
-//     if (
-//       nameOfGroup === "" ||
-//       isNaN(idOfExpense) ||
-//       isNaN(idOfPayer) ||
-//       isNaN(paidAmount)
-//     ) {
-//       return res.status(400).json({ error: "Invalid input data!" });
-//     }
+    if (
+      nameOfGroup === "" ||
+      isNaN(idOfExpense) ||
+      isNaN(idOfPayer) ||
+      isNaN(paidAmount)
+    ) {
+      return res.status(400).json({ error: "Invalid input data!" });
+    }
 
-//     const expenseUpdate = await prisma.expense.update({
-//       where: { id: idOfExpense },
-//       data: {
-//         group: {
-//           update: {
-//             name: groupName,
-//           },
-//         },
-//         paidBy: {
-//           connect: {
-//             id: idOfPayer,
-//           },
-//         },
-//       },
-//       include: {
-//         group: true,
-//       },
-//     });
+    const expenseUpdate = await prisma.expense.update({
+      where: { id: idOfExpense },
+      data: {
+        group: {
+          update: {
+            name: groupName,
+          },
+        },
+        paidBy: {
+          connect: {
+            id: idOfPayer,
+          },
+        },
+      },
+      include: {
+        group: true,
+      },
+    });
 
-//     res.status(200).json({ expenseUpdate });
-//   } catch (error) {
-//     console.error("Error updating expense!", error);
-//     res
-//       .status(500)
-//       .json({ error: "An error occured while updating the expense!" });
-//   }
-// };
+    res.status(200).json({ expenseUpdate });
+  } catch (error) {
+    console.error("Error updating expense!", error);
+    res
+      .status(500)
+      .json({ error: "An error occured while updating the expense!" });
+  }
+};
