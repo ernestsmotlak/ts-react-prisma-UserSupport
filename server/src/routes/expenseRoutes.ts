@@ -1,5 +1,5 @@
 import express from 'express';
-import { addExpense, getExpensesForUser, updateExpense } from '../controllers/expenseController';
+import { addExpense, getExpensesForUser, updateExpense, updateExpense2 } from '../controllers/expenseController';
 import { authenticateToken } from '../middleware/authMiddleware';
 
 const router = express.Router();
@@ -8,5 +8,7 @@ const router = express.Router();
 router.get('/expenses/:username', authenticateToken, getExpensesForUser);
 router.post('/expenses/addexpense/:userId', authenticateToken, addExpense);
 router.patch('/expenses/updateexpense/:expenseId', authenticateToken, updateExpense);
+router.put('/expenses/updateexpense2/:expenseId', authenticateToken, updateExpense2);
+
 
 export default router;

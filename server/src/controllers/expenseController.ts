@@ -96,6 +96,8 @@ export const addExpense = async (req: Request, res: Response) => {
   }
 };
 
+
+// this one will most likely be useless, DELETE ME!!!
 export const updateExpense = async (req: Request, res: Response) => {
   const { expenseId } = req.params; // Get expenseId from URL parameters
   const { amountPaid } = req.body; // Get amountPaid from the request body
@@ -139,24 +141,23 @@ export const updateExpense2 = async (req: Request, res: Response) => {
     const amountPaid2 = parseFloat(amountPaid);
 
     if (isNaN(groupId2) || isNaN(paidById2) || isNaN(amountPaid2)) {
-      return res.status(400).json({error: 'Error in data!'});
+      return res.status(400).json({ error: "Error in data!" });
     }
 
-    const expenseUpdate2 = prisma.expense.update({
-      where: {id: expenseId2},
+    const expenseUpdate2 = await prisma.expense.update({
+      where: { id: expenseId2 },
       data: {
         groupId: groupId2,
         paidById: paidById2,
         amountPaid: amountPaid2,
         paidFor: paidFor,
         expenseName: expenseName,
-      }
+      },
     });
 
     res.status(200).json({ expenseUpdate2 });
-    
   } catch (error) {
     console.error("Error updating2!", error);
-    res.status(500).jsonp({error: "An error occured upon updating2!"});
+    res.status(500).jsonp({ error: "An error occured upon updating2!" });
   }
 };
