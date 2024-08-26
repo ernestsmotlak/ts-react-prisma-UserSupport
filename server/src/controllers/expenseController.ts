@@ -48,32 +48,33 @@ export const getExpensesForUser = async (req: Request, res: Response) => {
 
 export const addExpense = async (req: Request, res: Response) => {
   const { userId } = req.params; // Get userId from URL parameters
-  const { groupId, amountPaid, paidFor } = req.body; // Get other data from request body
+  const { groupId, amountPaid, paidFor, expenseName } = req.body; // Get other data from request body
 
   console.log("userId:", userId);
   console.log("groupId:", groupId);
   console.log("amountPaid:", amountPaid);
   console.log("paidFor:", paidFor);
+  console.log("expenseName:", expenseName);
 
   try {
     // Convert the values to the correct types
     const groupIdInt = parseInt(groupId, 10);
     const userIdInt = parseInt(userId, 10);
-    console.log("!! userIDint: ", userIdInt);
     const amountPaidFloat = parseFloat(amountPaid);
 
-    // Check if the conversions are successful
-    if (isNaN(groupIdInt) || isNaN(userIdInt) || isNaN(amountPaidFloat)) {
-      return res.status(400).json({ error: "Invalid input data" });
+    // Check if the conversions are successful and if expenseName is provided
+    if (isNaN(groupIdInt) || isNaN(userIdInt) || isNaN(amountPaidFloat) || !expenseName || expenseName.trim() === '') {
+      return res.status(400).json({ error: "Invalid input data or missing expenseName" });
     }
 
     // Create a new expense linked to the userId from params
     const newExpense = await prisma.expense.create({
       data: {
         groupId: groupIdInt,
-        paidById: userIdInt, // Use the parsed integer value
-        amountPaid: amountPaidFloat, // Use the parsed float value
+        paidById: userIdInt,
+        amountPaid: amountPaidFloat,
         paidFor: paidFor,
+        expenseName: expenseName, // Explicitly require this field
       },
     });
 
@@ -85,7 +86,6 @@ export const addExpense = async (req: Request, res: Response) => {
       .json({ error: "An error occurred while adding the expense" });
   }
 };
-
 // export const updateExpense = async (req: Request, res: Response) => {
 //   const { expenseId } = req.params;
 //   const { groupName, paidById, amountPaid } = req.body;
